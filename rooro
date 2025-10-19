@@ -1,0 +1,10 @@
+User-agent  : Googlebot
+Disallow    : /nogooglebot/
+
+User-agent  : *
+Allow       : /
+
+Sitemap     :https://vibeslounge.ca/author/admin/sitemap.xml
+Sitemap     :https://vibeslounge.ca/author/admin/sitemap.xml
+
+
